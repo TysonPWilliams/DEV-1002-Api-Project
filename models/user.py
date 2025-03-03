@@ -8,7 +8,7 @@ class User(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(150), nullable=False, unique=True)
     address = db.Column(db.String(200))
-    role = db.Column(db.String(20) nullable=False) # Need to validate with marshmallow validation, 3 options.
+    role = db.Column(db.String(20), nullable=False) # Need to validate with marshmallow validation, 3 options.
 
 class UserSchema(ma.Schema):
     class Meta:

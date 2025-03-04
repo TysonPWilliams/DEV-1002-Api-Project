@@ -10,6 +10,8 @@ class User(db.Model):
     address = db.Column(db.String(200))
     role = db.Column(db.String(20), nullable=False) # Need to validate with marshmallow validation, 3 options.
 
+    job = db.relationship('Job', back_populates='client')
+
 class UserSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'email', 'address', 'role')

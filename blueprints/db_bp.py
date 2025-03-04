@@ -1,6 +1,7 @@
 from flask import Blueprint
 from init import db
 from models.user import User
+from models.job import Job
 
 db_bp = Blueprint('db', __name__)
 
@@ -29,4 +30,14 @@ def seed_database():
 
     db.session.add_all(users)
     db.session.commit()
+
+    jobs = [
+        Job(
+            title = "Simple Website Creation",
+            description = "Needed a web developer to create a deploy a simple website",
+            budget = 500,
+            status = "Not yet assigned",
+            client_id = 1
+        )
+    ]
     print("Database has been seeded")

@@ -13,12 +13,14 @@ class Job(db.Model):
     status = db.Column(db.String(20), nullable=False)
 
     client_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete='cascade'))
+
     client = db.relationship('User', back_populates='job')
+    contract = db.relationship('Contract', back_populates='job')
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class JobSchema(ma.Schema):
-    
+
     client = fields.Nested('UserSchema', exclude=['id', 'address', 'role'])
 
     class Meta:

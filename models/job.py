@@ -1,4 +1,6 @@
 from init import db, ma
+from marshmallow_sqlalchemy import fields
+from datetime import datetime
 
 class Job(db.Model):
     __tablename__ = 'jobs'
@@ -7,13 +9,20 @@ class Job(db.Model):
 
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text)
-    budget = db.Column(db.Decimal(10, 2))
+    budget = db.Column(db.DECIMAL(10, 2))
     status = db.Column(db.String(20), nullable=False)
-    client_id = db.Column(db.Integer, ForeignKey=True)
+
+    client_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete='cascade'))
+    client = db.relationship('User', back_populates='job')
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class JobSchema(ma.Schema):
+    
+    client = fields.Nested('UserSchema', exclude=['id', 'address', 'role'])
+
     class Meta:
-        fields = ('id', 'name', 'email', 'address', 'role')
+        fields = ('id', 'title', 'description', 'budget', 'status', 'client_id', 'client', 'created_at')
 
 one_job = JobSchema()
 many_jobs = JobSchema(many=True)

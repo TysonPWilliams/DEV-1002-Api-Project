@@ -11,6 +11,9 @@ class User(db.Model):
     role = db.Column(db.String(20), nullable=False) # Need to validate with marshmallow validation, 3 options.
 
     job = db.relationship('Job', back_populates='client')
+    
+    freelancer_contracts = db.relationship('Contract', foreign_keys='Contract.freelancer_id', back_populates='freelancer')
+    client_contracts = db.relationship('Contract', foreign_keys='Contract.client_id', back_populates='client')
 
 class UserSchema(ma.Schema):
     class Meta:

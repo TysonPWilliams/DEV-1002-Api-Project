@@ -12,7 +12,7 @@ class Contract(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete='cascade'))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
-    created_at = db.Column(db.Date, default=datetime.utcnow)
+    status = db.Column(db.String(50))
 
     freelancer = db.relationship('User', foreign_keys=[freelancer_id], back_populates='freelancer_contracts')
     client = db.relationship('User', foreign_keys=[client_id], back_populates='client_contracts')
@@ -28,7 +28,7 @@ class ContractSchema(ma.Schema):
     class Meta:
         model = Contract
         load_instance = True
-        fields = ('id', 'job', 'freelancer', 'client', 'start_date', 'end_date', 'created_at')
+        fields = ('id', 'job', 'freelancer', 'client', 'start_date', 'end_date', 'status')
 
     
 

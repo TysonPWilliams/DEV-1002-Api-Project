@@ -1,7 +1,11 @@
 from flask import Blueprint
 from init import db
+from datetime import datetime
 from models.user import User
 from models.job import Job
+from models.application import Application
+from models.contract import Contract
+from models.payment import Payment
 
 db_bp = Blueprint('db', __name__)
 
@@ -40,4 +44,46 @@ def seed_database():
             client_id = 1
         )
     ]
+
+    db.session.add_all(jobs)
+    db.session.commit()
+
+    applications = [
+        Application(
+            job_id = 1,
+            freelancer_id = 1,
+            bid_amount = 450,
+            status = "In progress"
+        )
+    ]
+
+    db.session.add_all(applications)
+    db.session.commit()
+    
+    contracts = [
+        Contract(
+            job_id = 1,
+            freelancer_id = 1,
+            client_id = 2,
+            start_date = "2025-03-04",
+            end_date = "2025-04-04",
+            status = "Not yet accepted"
+        )
+    ]
+
+    db.session.add_all(contracts)
+    db.session.commit()
+
+    payments = [
+        Payment(
+            contract_id = 1,
+            amount = 450,
+            status = "Paid",
+            payment_date = datetime.utcnow()
+        )
+    ]
+
+    db.session.add_all(payments)
+    db.session.commit()
+
     print("Database has been seeded")

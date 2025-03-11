@@ -24,6 +24,19 @@ def get_one_payment(payment_id):
 # Create a payment - POST /payments
 @payments_bp.route('/payments', methods=['POST'])
 def create_payment():
+
+    from flask import request
+
+@app.route('/payment', methods=['POST'])
+def process_payment():
+    ip_address = request.remote_addr  # Gets the user's IP address
+    forwarded_for = request.headers.get('X-Forwarded-For')
+
+    if forwarded_for:
+        ip_address = forwarded_for.split(',')[0]  # Get the first IP in case of multiple proxies
+
+    # Save IP address along with the payment details
+
     try:
         data = payment_without_id.load(request.json)
 
@@ -31,7 +44,9 @@ def create_payment():
             contract_id = data.get('contract_id'),
             amount = data.get('amount'),
             status = data.get('status'),
-            payment_date = data.get('payment_date')
+            payment_date = data.get('payment_date'),
+            ip_address = data.get('ip_address'),
+            payment_method = data.get('payment_method')
         )
 
         db.session.add(new_payment)
@@ -54,6 +69,8 @@ def update_payment(payment_id):
             payment.amount = data.get('amount') or payment.amount
             payment.status = data.get('status') or payment.status
             payment.payment_date = data.get('payment_date') or payment.payment_date
+            payment.ip_address = data.get('ip_address') or payment.ip_address
+            payment.payment_method = data.get('payment_method') or payment.payment_method
 
             db.session.commit()
             return one_payment.dump(payment)

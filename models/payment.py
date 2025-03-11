@@ -11,12 +11,14 @@ class Payment(db.Model):
     amount = db.Column(db.DECIMAL(10, 2))
     status = db.Column(db.String(20), nullable=False)
     payment_date = db.Column(db.DateTime)
+    ip_address = db.Column(db.String(45), nullable=False)
+    payment_method = db.Column(db.String(50))
 
     
 
 class PaymentSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'contract_id', 'amount', 'status', 'payment_date')
+        fields = ('id', 'contract_id', 'amount', 'status', 'payment_date', 'ip_address', 'payment_method')
 
 one_payment = PaymentSchema()
 many_payments = PaymentSchema(many=True)

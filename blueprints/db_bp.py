@@ -79,7 +79,9 @@ def seed_database():
             contract_id = 1,
             amount = 450,
             status = "Paid",
-            payment_date = datetime.utcnow()
+            ip_address = "127.0.0.1",
+            payment_date = datetime.utcnow(),
+            payment_method = "Credit Card"
         )
     ]
 

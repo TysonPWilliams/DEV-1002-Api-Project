@@ -22,7 +22,7 @@ def get_one_payment(payment_id):
         return {"error": f"Payment with id {payment_id} not found! "}, 404
     
 # Create a payment - POST /payments
-@payments_bp.route('/payment', methods=['POST'])
+@payments_bp.route('/payments', methods=['POST'])
 def create_payment():
     ip_address = request.remote_addr  # Gets the user's IP address
     forwarded_for = request.headers.get('X-Forwarded-For')

@@ -22,13 +22,8 @@ def get_one_payment(payment_id):
         return {"error": f"Payment with id {payment_id} not found! "}, 404
     
 # Create a payment - POST /payments
-@payments_bp.route('/payments', methods=['POST'])
+@payments_bp.route('/payment', methods=['POST'])
 def create_payment():
-
-    from flask import request
-
-@app.route('/payment', methods=['POST'])
-def process_payment():
     ip_address = request.remote_addr  # Gets the user's IP address
     forwarded_for = request.headers.get('X-Forwarded-For')
 
@@ -36,7 +31,6 @@ def process_payment():
         ip_address = forwarded_for.split(',')[0]  # Get the first IP in case of multiple proxies
 
     # Save IP address along with the payment details
-
     try:
         data = payment_without_id.load(request.json)
 
@@ -45,7 +39,7 @@ def process_payment():
             amount = data.get('amount'),
             status = data.get('status'),
             payment_date = data.get('payment_date'),
-            ip_address = data.get('ip_address'),
+            ip_address = ip_address,
             payment_method = data.get('payment_method')
         )
 

@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from init import db
 from models.job import Job, many_jobs, one_job, job_without_id
+from datetime import datetime, timezone
 
 jobs_bp = Blueprint('jobs', __name__)
 
@@ -33,7 +34,7 @@ def create_job():
             budget = data.get('budget'),
             status = data.get('status'),
             client_id = data.get('client_id'),
-            created_at = data.get('created_at')
+            created_at = datetime.now(timezone.utc)
         )
 
         db.session.add(new_job)

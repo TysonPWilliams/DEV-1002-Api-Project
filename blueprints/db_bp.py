@@ -41,7 +41,7 @@ def seed_database():
             title = "Simple Website Creation",
             description = "Needed a web developer to create a deploy a simple website",
             budget = 500,
-            status = "Not yet assigned",
+            status = "Open",
             client_id = 1
         )
     ]

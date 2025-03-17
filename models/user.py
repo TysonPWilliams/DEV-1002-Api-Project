@@ -36,7 +36,6 @@ class UserSchema(ma.Schema):
         lambda obj: obj.created_at.astimezone(pytz.timezone('Australia/Sydney')).strftime('%d/%m/%Y %H:%M %Z') if obj.created_at else None
     )
 
-    # Format updated_at field in Sydney time zone
     updated_at = fields.Function(
         lambda obj: obj.updated_at.astimezone(pytz.timezone('Australia/Sydney')).strftime('%d/%m/%Y %H:%M %Z') if obj.updated_at else None
     )

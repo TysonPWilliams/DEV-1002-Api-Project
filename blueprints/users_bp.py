@@ -35,11 +35,10 @@ def create_user():
             address = data.get('address'),
             role = data.get('role'),
             is_active = data.get('is_active', True),
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc)  
+            created_at = datetime.now(timezone.utc),
+            updated_at = datetime.now(timezone.utc)  
         )
 
-        print("New User Object:", new_user)  # Debugging
 
         db.session.add(new_user)
         db.session.commit()

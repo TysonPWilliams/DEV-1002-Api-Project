@@ -1,6 +1,8 @@
 from flask import Blueprint, request
 from init import db
 from models.user import User, many_users, one_user, user_without_id
+from datetime import datetime
+from marshmallow import ValidationError
 
 users_bp = Blueprint('users', __name__)
 
@@ -31,13 +33,17 @@ def create_user():
             name = data.get('name'),
             email = data.get('email'),
             address = data.get('address'),
-            role = data.get('role')
+            role = data.get('role'),
+            is_active = data.get('is_active', True)
+            
         )
 
         db.session.add(new_user)
         db.session.commit()
         return one_user.dump(new_user), 201
     
+    except ValidationError as err:
+        return {"Error": str(err)}, 400
     except Exception as err:
         return {"Error": str(err)}, 400
 
@@ -54,7 +60,10 @@ def update_user(user_id):
             user.email = data.get('email') or user.email
             user.address = data.get('address') or user.address
             user.role = data.get('role') or user.role
-
+            user.is_active = data.get('is_active') or user.is_active
+            user.created_at = data.get('created_at') or user.created_at
+            user.updated_at = data.get('updated_at') or user.updated_at
+            
             db.session.commit()
             return one_user.dump(user)
     

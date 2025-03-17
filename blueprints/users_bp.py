@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from init import db
 from models.user import User, many_users, one_user, user_without_id
-from datetime import datetime
+from datetime import datetime, timezone
 from marshmallow import ValidationError
 
 users_bp = Blueprint('users', __name__)
@@ -35,12 +35,12 @@ def create_user():
             address = data.get('address'),
             role = data.get('role'),
             is_active = data.get('is_active', True),
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()  
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc)  
         )
 
         print("New User Object:", new_user)  # Debugging
-        
+
         db.session.add(new_user)
         db.session.commit()
         return one_user.dump(new_user), 201

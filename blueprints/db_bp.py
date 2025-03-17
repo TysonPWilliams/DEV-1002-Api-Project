@@ -5,7 +5,6 @@ from models.user import User
 from models.job import Job
 from models.application import Application
 from models.contract import Contract
-from models.payment import Payment
 
 db_bp = Blueprint('db', __name__)
 
@@ -22,13 +21,15 @@ def seed_database():
             name = 'Tyson Williams',
             email = 'tysonwilliams@gmail.com',
             address = '30 Beckwith Street, Wagga Wagga',
-            role = 'Admin'
+            role = 'Admin',
+            is_active = True
         ),
         User(
             name = 'Jemimah Bailey',
             email = 'jemimahbailey@gmail.com',
             address = '30 Beckwith Street, Wagga Wagga',
-            role = 'Freelancer'
+            role = 'Freelancer',
+            is_active = True
         )
     ]
 
@@ -72,20 +73,6 @@ def seed_database():
     ]
 
     db.session.add_all(contracts)
-    db.session.commit()
-
-    payments = [
-        Payment(
-            contract_id = 1,
-            amount = 450,
-            status = "Paid",
-            ip_address = "127.0.0.1",
-            payment_date = datetime.utcnow(),
-            payment_method = "Credit Card"
-        )
-    ]
-
-    db.session.add_all(payments)
     db.session.commit()
 
     print("Database has been seeded")

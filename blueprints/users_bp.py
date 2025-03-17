@@ -34,10 +34,13 @@ def create_user():
             email = data.get('email'),
             address = data.get('address'),
             role = data.get('role'),
-            is_active = data.get('is_active', True)
-            
+            is_active = data.get('is_active', True),
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow()  
         )
 
+        print("New User Object:", new_user)  # Debugging
+        
         db.session.add(new_user)
         db.session.commit()
         return one_user.dump(new_user), 201

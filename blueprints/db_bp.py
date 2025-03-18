@@ -68,7 +68,7 @@ def seed_database():
             client_id = 2,
             start_date = "2025-03-04",
             end_date = "2025-04-04",
-            status = "Not yet accepted"
+            status = "Active"
         )
     ]
 

@@ -25,20 +25,19 @@ class JobSchema(ma.Schema):
     title = fields.Str(required=True)
     description = fields.Str()
     budget = fields.Decimal(as_string=True, places=2, required=True, validate=validate.Range(min=0))
-    client = fields.Nested('UserSchema', exclude=['id', 'address', 'role'])
     status = fields.Str(
         required=True,
         validate=validate.OneOf(["Open", "In Progress", "Completed", "Cancelled"], error="Invalid status, please enter either Open, In Progress, Completed or Cancelled")
     )
-    client_id = fields.Int(required=True)
-    client = fields.Nested('UserSchema', exclude=['id', 'address', 'role'])
+    client_id = fields.Int()
+    client = fields.Nested('UserSchema', exclude=['address', 'role', 'created_at', 'updated_at'])
     created_at = fields.Function(
         lambda obj: obj.created_at.astimezone(pytz.timezone('Australia/Sydney')).strftime('%d/%m/%Y %H:%M %Z') if obj.created_at else None
     )    
     
 
     class Meta:
-        fields = ('id', 'title', 'description', 'budget', 'status', 'client_id', 'client', 'created_at')
+        fields = ('id', 'title', 'description', 'budget', 'status', 'client', 'client_id', 'created_at')
 
 one_job = JobSchema()
 many_jobs = JobSchema(many=True)

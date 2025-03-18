@@ -8,7 +8,7 @@ contracts_bp = Blueprint('contracts', __name__)
 @contracts_bp.route('/contracts')
 def get_contracts():
     stmt = db.Select(Contract)
-    contracts = db.session.scalars(stmt)
+    contracts = db.session.scalars(stmt).all()
     return many_contracts.dump(contracts)
 
 # Read one contract - GET /contracts/<int:contract_id>
@@ -33,7 +33,7 @@ def create_contract():
             client_id = data.get('client_id'),
             start_date = data.get('start_date'),
             end_date = data.get('end_date'),
-            created_at = data.get('created_at')
+            status = data.get('status')
         )
 
         db.session.add(new_contract)

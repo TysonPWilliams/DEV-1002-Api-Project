@@ -1,10 +1,11 @@
 from flask import Blueprint
 from init import db
-from datetime import datetime
+from datetime import datetime, timezone
 from models.user import User
 from models.job import Job
 from models.application import Application
 from models.contract import Contract
+from models.review import Review
 
 db_bp = Blueprint('db', __name__)
 
@@ -73,6 +74,18 @@ def seed_database():
     ]
 
     db.session.add_all(contracts)
+    db.session.commit()
+
+    reviews = [
+        Review(
+            contract_id = 1,
+            rating = 8.5,
+            comment = "The returned website is exactly what was needed, however communication with the freelancer was difficult",
+            created_at = datetime.now(timezone.utc)
+        )   
+    ]
+
+    db.session.add_all(reviews)
     db.session.commit()
 
     print("Database has been seeded")

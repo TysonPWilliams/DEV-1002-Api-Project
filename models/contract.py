@@ -26,7 +26,10 @@ class ContractSchema(ma.Schema):
     
     created_at = fields.DateTime(format="%Y-%m-%d")
     client_id = fields.Nested('UserSchema', exclude=['role', 'address'])
-
+    freelancer = fields.Nested('UserSchema', exclude=['role', 'address'])
+    client = fields.Nested('UserSchema', exclude=['role', 'address'])
+    job = fields.Nested('JobSchema', exclude=['client_id', 'client', 'created_at'])
+    
     class Meta:
         model = Contract
         load_instance = True
@@ -34,9 +37,7 @@ class ContractSchema(ma.Schema):
 
     
 
-    freelancer = fields.Nested('UserSchema', exclude=['role', 'address'])
-    client = fields.Nested('UserSchema', exclude=['role', 'address'])
-    job = fields.Nested('JobSchema', exclude=['client_id', 'client', 'created_at'])
+    
 
 one_contract = ContractSchema()
 many_contracts = ContractSchema(many=True)

@@ -17,6 +17,8 @@ class Contract(db.Model):
     freelancer = db.relationship('User', foreign_keys=[freelancer_id], back_populates='freelancer_contracts')
     client = db.relationship('User', foreign_keys=[client_id], back_populates='client_contracts')
     job = db.relationship('Job', back_populates='contract')
+    review = db.relationship('Review', back_populates='contract')
+    
 
     
 

@@ -7,6 +7,7 @@ from blueprints.users_bp import users_bp
 from blueprints.jobs_bp import jobs_bp
 from blueprints.applications_bp import applications_bp
 from blueprints.contracts_bp import contracts_bp
+from blueprints.reviews_bp import reviews_bp
 
 load_dotenv()
 
@@ -23,6 +24,7 @@ def create_app():
     app.register_blueprint(jobs_bp)
     app.register_blueprint(applications_bp)
     app.register_blueprint(contracts_bp)
+    app.register_blueprint(reviews_bp)
 
 
     return app

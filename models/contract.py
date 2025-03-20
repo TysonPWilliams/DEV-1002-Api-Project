@@ -1,6 +1,7 @@
 from init import db, ma
 from marshmallow import fields
-from datetime import datetime, date
+from datetime import datetime, timezone
+import pytz
 
 class Contract(db.Model):
     __tablename__ = 'contracts'
@@ -12,6 +13,7 @@ class Contract(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete='cascade'))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), nullable=False)
     status = db.Column(db.String(50))
 
     freelancer = db.relationship('User', foreign_keys=[freelancer_id], back_populates='freelancer_contracts')
@@ -20,21 +22,36 @@ class Contract(db.Model):
     review = db.relationship('Review', back_populates='contract')
     
 
-    
-
 class ContractSchema(ma.Schema):
     
     created_at = fields.DateTime(format="%Y-%m-%d")
-    client_id = fields.Nested('UserSchema', exclude=['role', 'address'])
-    freelancer = fields.Nested('UserSchema', exclude=['role', 'address'])
-    client = fields.Nested('UserSchema', exclude=['role', 'address'])
-    job = fields.Nested('JobSchema', exclude=['client_id', 'client', 'created_at'])
+    client_id = fields.Int()
+
+    created_at = fields.Function(
+        lambda obj: obj.created_at.astimezone(pytz.timezone('Australia/Sydney')).strftime('%d/%m/%Y %H:%M %Z') if obj.created_at else None
+    )   
+    freelancer = fields.Nested(
+        'UserSchema',
+        exclude=[
+            'role',
+            'address',
+            'created_at',
+            'updated_at',
+            'email'])
+    
+    client = fields.Nested(
+        'UserSchema',
+        exclude=[
+            'role',
+            'address',
+            'created_at',
+            'updated_at',
+            'email'])
+    
+    job = fields.Nested('JobSchema', exclude=['client_id', 'client', 'created_at', 'budget'])
     
     class Meta:
-        model = Contract
-        load_instance = True
-        fields = ('id', 'job', 'freelancer', 'client', 'start_date', 'end_date', 'status')
-
+        fields = ('id', 'job', 'freelancer', 'freelancer_id', 'client_id', 'job_id', 'client', 'created_at', 'start_date', 'end_date', 'status')
     
 
     

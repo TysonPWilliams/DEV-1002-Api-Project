@@ -17,15 +17,13 @@ class Review(db.Model):
     
 
 class ReviewSchema(ma.Schema):
+    contract_id = fields.Int()
     contract = fields.Nested('ContractSchema', exclude=[
         'client.created_at',
-        'client.is_active',
         'client.updated_at',
         'freelancer.created_at',
-        'freelancer.is_active',
         'freelancer.updated_at',
         'job.budget',
-        'job.status',
         'status'])
     rating = fields.Float(
         required=True,
@@ -39,10 +37,24 @@ class ReviewSchema(ma.Schema):
     )
 
     class Meta:
-        fields = ('id', 'contract', 'rating', 'comment', 'created_at')
+        fields = ('id', 'contract_id', 'contract', 'rating', 'comment', 'created_at')
 
 class ReviewListSchema(ma.Schema):
-    contract_id = fields.Int()
+    contract_id = fields.Int(required=True)
+    contract = fields.Nested(
+        'ContractSchema',
+        exclude=['id',
+                'job',
+                'start_date',
+                'end_date',
+                'client.created_at',
+                'client.email',
+                'client.is_active',
+                'client.updated_at',
+                'freelancer.created_at',
+                'freelancer.email',
+                'freelancer.is_active',
+                'freelancer.updated_at',])
     rating = fields.Float(
         required=True,
         validate=validate.Range(min=0, max=10, error="Rating must be between 0 and 10.")
@@ -55,7 +67,7 @@ class ReviewListSchema(ma.Schema):
     )
 
     class Meta:
-        fields = ('id', 'contract_id', 'rating', 'comment', 'created_at')
+        fields = ('id', 'contract_id', 'contract', 'rating', 'comment', 'created_at')
 
 one_review = ReviewSchema()
 many_reviews = ReviewListSchema(many=True)

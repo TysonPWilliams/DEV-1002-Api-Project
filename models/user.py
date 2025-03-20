@@ -9,7 +9,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(150), nullable=False, unique=True)
+    email = db.Column(db.String(100), nullable=False, unique=True)
     address = db.Column(db.String(200))
     role = db.Column(db.String(20), nullable=False) # Need to validate with marshmallow validation, 3 options.
     is_active = db.Column(db.Boolean, default=True)
@@ -21,13 +21,15 @@ class User(db.Model):
     freelancer_contracts = db.relationship('Contract', foreign_keys='Contract.freelancer_id', back_populates='freelancer')
     client_contracts = db.relationship('Contract', foreign_keys='Contract.client_id', back_populates='client')
 
+    freelancer_application = db.relationship('Application', back_populates='freelancer')
+
 class UserSchema(ma.Schema):
     id = fields.Int(dump_only=True)
-    name = fields.Str(required=True)
-    email = fields.Str(required=True, unique=True)
+    name = fields.Str(
+        validate=validate.Length(min=4, max=100))
+    email = fields.Str(unique=True)
     address = fields.Str()
     role = fields.Str(
-        required=True,
         validate=validate.OneOf(["Freelancer", "Admin", "Client"], error="Invalid role, must be Freelancer, Admin, or Client.")
     )
     is_active = fields.Boolean(dump_only=False)
@@ -36,7 +38,6 @@ class UserSchema(ma.Schema):
         lambda obj: obj.created_at.astimezone(pytz.timezone('Australia/Sydney')).strftime('%d/%m/%Y %H:%M %Z') if obj.created_at else None
     )
 
-    # Format updated_at field in Sydney time zone
     updated_at = fields.Function(
         lambda obj: obj.updated_at.astimezone(pytz.timezone('Australia/Sydney')).strftime('%d/%m/%Y %H:%M %Z') if obj.updated_at else None
     )

@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from init import db
 from models.contract import Contract, many_contracts, one_contract, contract_without_id
+from datetime import datetime, timezone
 
 contracts_bp = Blueprint('contracts', __name__)
 
@@ -33,7 +34,7 @@ def create_contract():
             client_id = data.get('client_id'),
             start_date = data.get('start_date'),
             end_date = data.get('end_date'),
-            created_at = data.get('created_at')
+            created_at = datetime.now(timezone.utc)
         )
 
         db.session.add(new_contract)

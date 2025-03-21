@@ -1,5 +1,6 @@
 from init import db, ma
 from marshmallow import fields, validate
+from marshmallow.validate import Email
 from datetime import datetime, timezone
 import pytz
 
@@ -27,7 +28,7 @@ class UserSchema(ma.Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str(
         validate=validate.Length(min=4, max=100))
-    email = fields.Str(unique=True)
+    email = fields.Email(validate=Email(error="Invalid email format"), unique=True)
     address = fields.Str()
     role = fields.Str(
         validate=validate.OneOf(["Freelancer", "Admin", "Client"], error="Invalid role, must be Freelancer, Admin, or Client.")

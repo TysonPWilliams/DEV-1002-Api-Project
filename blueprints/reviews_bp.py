@@ -2,31 +2,47 @@ from flask import Blueprint, request
 from init import db
 from models.review import Review, many_reviews, one_review, review_without_id
 from datetime import datetime, timezone
+from sqlalchemy.exc import OperationalError, DataError, IntegrityError
 
 reviews_bp = Blueprint('reviews', __name__)
 
 # Read all reviews - GET /reviews
 @reviews_bp.route('/reviews')
 def get_reviews():
-    stmt = db.Select(Review)
-    reviews = db.session.scalars(stmt)
-    return many_reviews.dump(reviews)
+    try:
+        stmt = db.Select(Review)
+        reviews = db.session.scalars(stmt)
+        return many_reviews.dump(reviews)
 
+    except OperationalError:
+        db.session.rollback()
+        return{"error": "Database connection error. Please try again later."}, 500
+    except Exception as err:
+        db.session.rollback()
+        return{"error": str(err)}, 400
+    
 # Read one review - GET /reviews/<int:review_id>
 @reviews_bp.route('/reviews/<int:review_id>')
 def get_one_review(review_id):
-    stmt = db.select(Review).filter_by(id=review_id)
-    review = db.session.scalar(stmt)
-    if review:
-        return one_review.dump(review)
-    else:
-        return {"error": f"Review with id {review_id} not found! "}, 404
+    try: 
+        stmt = db.select(Review).filter_by(id=review_id)
+        review = db.session.scalar(stmt)
+        if review:
+            return one_review.dump(review)
+        else:
+            return {"error": f"Review with id {review_id} not found! "}, 404
+        
+    except DataError:
+        db.session.rollback()
+        return {"error": "Invalid input type. ID must be an integer."}, 400
+    except Exception as err:
+        db.session.rollback()
+        return{"error": str(err)}, 500
     
 # Create a review - POST /reviews
 @reviews_bp.route('/reviews', methods=['POST'])
 def create_review():
     try:
-        
         data = review_without_id.load(request.json)
 
         new_review = Review(
@@ -40,7 +56,11 @@ def create_review():
         db.session.commit()
         return one_review.dump(new_review), 201
     
+    except IntegrityError:
+        db.session.rollback()
+        return{"error": "Database integrity error. Check foreign key constraints."}, 400
     except Exception as err:
+        db.session.rollback()
         return {"Error": str(err)}, 400
 
 # Update a review - PUT and PATCH /reviews/<int:review_id>
@@ -84,4 +104,5 @@ def delete_review(review_id):
             return {"Error": f"Review with id {review_id} not found!"}, 404
         
     except Exception as err:
+        db.session.rollback()
         return {"error", str(err)}

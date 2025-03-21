@@ -3,15 +3,24 @@ from init import db
 from models.user import User, many_users, one_user, user_without_id
 from datetime import datetime, timezone
 from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError, OperationalError
 
 users_bp = Blueprint('users', __name__)
 
 # Read all users - GET /users
 @users_bp.route('/users')
 def get_users():
-    stmt = db.Select(User).order_by(User.name)
-    users = db.session.scalars(stmt)
-    return many_users.dump(users)
+    try:
+        stmt = db.Select(User).order_by(User.name)
+        users = db.session.scalars(stmt)
+        return many_users.dump(users)
+    
+    except OperationalError:
+        db.session.rollback()
+        return{"error": "Database connection error. Please try again later."}, 500
+    except Exception as err:
+        db.session.rollback()
+        return{"error": str(err)}, 400
 
 # Read one user - GET /users/<int:user_id>
 @users_bp.route('/users/<int:user_id>')
@@ -39,15 +48,18 @@ def create_user():
             updated_at=datetime.now(timezone.utc)  
         )
 
-        print("New User Object:", new_user)  # Debugging
-
         db.session.add(new_user)
         db.session.commit()
         return one_user.dump(new_user), 201
     
+    except IntegrityError:
+        db.session.rollback()
+        return{"error": "Email already exists. Please use a different email."}, 400
     except ValidationError as err:
+        db.session.rollback()
         return {"Error": str(err)}, 400
     except Exception as err:
+        db.session.rollback()
         return {"Error": str(err)}, 400
 
 # Update a user - PUT and PATCH /users/<int:user_id>
@@ -56,6 +68,7 @@ def update_user(user_id):
     try:
         stmt = db.select(User).filter_by(id=user_id)
         user = db.session.scalar(stmt)
+
         if user:
             data = user_without_id.load(request.json)
 
@@ -94,4 +107,5 @@ def delete_user(user_id):
             return {"Error": f"User with id {user_id} not found!"}, 404
         
     except Exception as err:
+        db.session.rollback()
         return {"error", str(err)}

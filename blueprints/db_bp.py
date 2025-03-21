@@ -11,81 +11,90 @@ db_bp = Blueprint('db', __name__)
 
 @db_bp.cli.command('init')
 def create_database():
-    db.drop_all()
-    db.create_all()
-    print("Tables Created")
+    try:
+        db.drop_all()
+        db.create_all()
+        print("Tables Created")
+
+    except Exception as err:
+        db.session.rollback()
+        print(f"Error during database initialisation: {err}")
 
 @db_bp.cli.command('seed')
 def seed_database():
-    users = [
-        User(
-            name = 'Tyson Williams',
-            email = 'tysonwilliams@gmail.com',
-            address = '30 Beckwith Street, Wagga Wagga',
-            role = 'Admin',
-            is_active = True
-        ),
-        User(
-            name = 'Jemimah Bailey',
-            email = 'jemimahbailey@gmail.com',
-            address = '30 Beckwith Street, Wagga Wagga',
-            role = 'Freelancer',
-            is_active = True
-        )
-    ]
+    try:
+        users = [
+            User(
+                name = 'Tyson Williams',
+                email = 'tysonwilliams@gmail.com',
+                address = '30 Beckwith Street, Wagga Wagga',
+                role = 'Admin',
+                is_active = True
+            ),
+            User(
+                name = 'Jemimah Bailey',
+                email = 'jemimahbailey@gmail.com',
+                address = '30 Beckwith Street, Wagga Wagga',
+                role = 'Freelancer',
+                is_active = True
+            )
+        ]
 
-    db.session.add_all(users)
-    db.session.commit()
+        db.session.add_all(users)
+        db.session.commit()
 
-    jobs = [
-        Job(
-            title = "Simple Website Creation",
-            description = "Need a web developer to create and deploy a simple website",
-            budget = 500,
-            status = "Not yet assigned",
-            client_id = 1
-        )
-    ]
+        jobs = [
+            Job(
+                title = "Simple Website Creation",
+                description = "Need a web developer to create and deploy a simple website",
+                budget = 500,
+                status = "Not yet assigned",
+                client_id = 1
+            )
+        ]
 
-    db.session.add_all(jobs)
-    db.session.commit()
+        db.session.add_all(jobs)
+        db.session.commit()
 
-    applications = [
-        Application(
-            job_id = 1,
-            freelancer_id = 1,
-            bid_amount = 450,
-            status = "In progress"
-        )
-    ]
+        applications = [
+            Application(
+                job_id = 1,
+                freelancer_id = 1,
+                bid_amount = 450,
+                status = "In progress"
+            )
+        ]
 
-    db.session.add_all(applications)
-    db.session.commit()
-    
-    contracts = [
-        Contract(
-            job_id = 1,
-            freelancer_id = 1,
-            client_id = 2,
-            start_date = "2025-03-04",
-            end_date = "2025-04-04",
-            status = "Not yet accepted"
-        )
-    ]
+        db.session.add_all(applications)
+        db.session.commit()
+        
+        contracts = [
+            Contract(
+                job_id = 1,
+                freelancer_id = 1,
+                client_id = 2,
+                start_date = "2025-03-04",
+                end_date = "2025-04-04",
+                status = "Not yet accepted"
+            )
+        ]
 
-    db.session.add_all(contracts)
-    db.session.commit()
+        db.session.add_all(contracts)
+        db.session.commit()
 
-    reviews = [
-        Review(
-            contract_id = 1,
-            rating = 8.5,
-            comment = "The returned website is exactly what was needed, however communication with the freelancer was difficult",
-            created_at = datetime.now(timezone.utc)
-        )   
-    ]
+        reviews = [
+            Review(
+                contract_id = 1,
+                rating = 8.5,
+                comment = "The returned website is exactly what was needed, however communication with the freelancer was difficult",
+                created_at = datetime.now(timezone.utc)
+            )   
+        ]
 
-    db.session.add_all(reviews)
-    db.session.commit()
+        db.session.add_all(reviews)
+        db.session.commit()
 
-    print("Database has been seeded")
+        print("Database has been seeded")
+
+    except Exception as err:
+        print(f"Error during database seeding: {err}")

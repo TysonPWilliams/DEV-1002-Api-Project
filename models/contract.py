@@ -1,5 +1,5 @@
 from init import db, ma
-from marshmallow import fields
+from marshmallow import fields, validates, ValidationError, validates_schema
 from datetime import datetime, timezone
 import pytz
 
@@ -50,6 +50,16 @@ class ContractSchema(ma.Schema):
     
     job = fields.Nested('JobSchema', exclude=['client_id', 'client', 'created_at', 'budget'])
     
+    @validates_schema
+    def validate_dates(self, data, **kwargs):
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+
+        if start_date and end_date:
+            if end_date < start_date:
+                raise ValidationError('end_date cannot be before start_date.')
+    
+
     class Meta:
         fields = ('id', 'job', 'freelancer', 'freelancer_id', 'client_id', 'job_id', 'client', 'created_at', 'start_date', 'end_date', 'status')
     

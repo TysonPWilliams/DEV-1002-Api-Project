@@ -2,25 +2,39 @@ from flask import Blueprint, request
 from init import db
 from models.application import Application, many_applications, one_application, application_without_id
 from datetime import datetime, timezone
+from sqlalchemy.exc import OperationalError
 
 applications_bp = Blueprint('applications', __name__)
 
 # Read all applications - GET /applications
 @applications_bp.route('/applications')
 def get_applications():
-    stmt = db.Select(Application)
-    applications = db.session.scalars(stmt)
-    return many_applications.dump(applications)
+    try:
+        stmt = db.Select(Application)
+        applications = db.session.scalars(stmt)
+        return many_applications.dump(applications)
+    
+    except OperationalError:
+        db.session.rollback()
+        return {"error": "Database connection error. Please try again later."}, 500
+    except Exception as err:
+        db.session.rollback()
+        return{"error": str(err)}, 400
 
 # Read one application - GET /applications/<int:application_id>
 @applications_bp.route('/applications/<int:application_id>')
 def get_one_application(application_id):
-    stmt = db.select(Application).filter_by(id=application_id)
-    application = db.session.scalar(stmt)
-    if application:
-        return one_application.dump(application)
-    else:
-        return {"error": f"Application with id {application_id} not found! "}, 404
+    try:
+        stmt = db.select(Application).filter_by(id=application_id)
+        application = db.session.scalar(stmt)
+        if application:
+            return one_application.dump(application)
+        else:
+            return {"error": f"Application with id {application_id} not found! "}, 404
+    
+    except Exception as err:
+        db.session.rollback()
+        return{"error": str(err)}, 400
     
 # Create a application - POST /applications
 @applications_bp.route('/applications', methods=['POST'])

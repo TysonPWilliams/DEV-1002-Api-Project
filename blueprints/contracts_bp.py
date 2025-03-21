@@ -2,25 +2,40 @@ from flask import Blueprint, request
 from init import db
 from models.contract import Contract, many_contracts, one_contract, contract_without_id
 from datetime import datetime, timezone
+from sqlalchemy.exc import IntegrityError, OperationalError
 
 contracts_bp = Blueprint('contracts', __name__)
 
 # Read all contracts - GET /contracts
 @contracts_bp.route('/contracts')
 def get_contracts():
-    stmt = db.Select(Contract)
-    contracts = db.session.scalars(stmt)
-    return many_contracts.dump(contracts)
+    try:
+        stmt = db.Select(Contract)
+        contracts = db.session.scalars(stmt)
+        return many_contracts.dump(contracts)
+    
+    except OperationalError:
+        db.session.rollback()
+        return{"error": "Database connection error. Please try again later."}, 500
+    except Exception as err:
+        db.session.rollback()
+        return{"error": str(err)}, 400
+
 
 # Read one contract - GET /contracts/<int:contract_id>
 @contracts_bp.route('/contracts/<int:contract_id>')
 def get_one_contract(contract_id):
-    stmt = db.select(Contract).filter_by(id=contract_id)
-    contract = db.session.scalar(stmt)
-    if contract:
-        return one_contract.dump(contract)
-    else:
-        return {"error": f"Contract with id {contract_id} not found! "}, 404
+    try:
+        stmt = db.select(Contract).filter_by(id=contract_id)
+        contract = db.session.scalar(stmt)
+        if contract:
+            return one_contract.dump(contract)
+        else:
+            return {"error": f"Contract with id {contract_id} not found! "}, 404
+        
+    except Exception as err:
+        db.session.rollback()
+        return{"error": str(err)}, 400
     
 # Create a contract - POST /contracts
 @contracts_bp.route('/contracts', methods=['POST'])
@@ -42,6 +57,7 @@ def create_contract():
         return one_contract.dump(new_contract), 201
     
     except Exception as err:
+        db.session.rollback()
         return {"Error": str(err)}, 400
 
 # Update a contract - PUT and PATCH /contracts/<int:contract_id>
@@ -87,4 +103,5 @@ def delete_contract(contract_id):
             return {"Error": f"Contract with id {contract_id} not found!"}, 404
         
     except Exception as err:
+        db.session.rollback()
         return {"error", str(err)}

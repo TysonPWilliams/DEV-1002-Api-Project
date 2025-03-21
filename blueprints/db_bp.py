@@ -40,7 +40,7 @@ def seed_database():
     jobs = [
         Job(
             title = "Simple Website Creation",
-            description = "Needed a web developer to create a deploy a simple website",
+            description = "Need a web developer to create and deploy a simple website",
             budget = 500,
             status = "Not yet assigned",
             client_id = 1

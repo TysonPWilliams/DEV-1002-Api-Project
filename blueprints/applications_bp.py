@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from init import db
 from models.application import Application, many_applications, one_application, application_without_id
+from datetime import datetime, timezone
 
 applications_bp = Blueprint('applications', __name__)
 
@@ -32,7 +33,7 @@ def create_application():
             freelancer_id = data.get('freelancer_id'),
             bid_amount = data.get('bid_amount'),
             status = data.get('status'),
-            created_at = data.get('created_at')
+            created_at = datetime.now(timezone.utc)
         )
 
         db.session.add(new_application)

@@ -65,7 +65,7 @@ def update_user(user_id):
             user.role = data.get('role') or user.role
             user.is_active = data.get('is_active') or user.is_active
             user.created_at = data.get('created_at') or user.created_at
-            user.updated_at = data.get('updated_at') or user.updated_at
+            user.updated_at = datetime.now(timezone.utc)
             
             db.session.commit()
             return one_user.dump(user)

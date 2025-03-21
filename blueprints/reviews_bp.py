@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from init import db
 from models.review import Review, many_reviews, one_review, review_without_id
+from datetime import datetime, timezone
 
 reviews_bp = Blueprint('reviews', __name__)
 
@@ -25,13 +26,14 @@ def get_one_review(review_id):
 @reviews_bp.route('/reviews', methods=['POST'])
 def create_review():
     try:
+        
         data = review_without_id.load(request.json)
 
         new_review = Review(
             contract_id = data.get('contract_id'),
             rating = data.get('rating'),
             comment = data.get('comment'),
-            created_at = data.get('created_at')
+            created_at = datetime.now(timezone.utc)
         )
 
         db.session.add(new_review)

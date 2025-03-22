@@ -9,11 +9,11 @@ from blueprints.applications_bp import applications_bp
 from blueprints.contracts_bp import contracts_bp
 from blueprints.reviews_bp import reviews_bp
 
-load_dotenv()
-
 def create_app():
     app = Flask(__name__)
 
+    load_dotenv(override=True)
+    
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 
     db.init_app(app)

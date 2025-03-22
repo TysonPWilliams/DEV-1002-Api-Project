@@ -12,6 +12,20 @@ The **Freelancer Job Board API** is structured using a relational database model
 - **Contract System**: A formal agreement is created between a client and a freelancer upon job acceptance.
 - **Review System**: After contract completion, both parties can leave reviews and ratings.
 
+## Hosted API
+
+The Freelancer Job Board API is live and accessible at:
+
+🔗 **Base URL:** [https://tysonwilliams.dev](https://tysonwilliams.dev)
+
+All API endpoints should be prefixed with this base URL. For example:
+- `GET https://tysonwilliams.dev/jobs`
+- `POST https://tysonwilliams.dev/users`
+
+⚠️ Note: If the API doesn’t respond immediately, please wait 30-60 seconds while the server wakes up.
+
+
+
 ## Database Structure (Entities & Relationships)
 
 ### 1. Users (PK: `id`)
@@ -125,7 +139,7 @@ flask run
 
 ---
 
-## 🛠 API Endpoints (Examples)
+## 🛠 API Endpoints (Local Examples)
 
 | Method | Endpoint          | Description         |
 | ------ | ----------------- | ------------------- |
@@ -136,6 +150,18 @@ flask run
 | `GET`  | `/contracts`      | View contracts      |
 | `POST` | `/reviews`        | Submit a review     |
 
+## 🛠 API Endpoints (Online Examples)
+
+| Method | Endpoint          | Description         |
+| ------ | ----------------- | ------------------- |
+| `POST` | `https://tysonwilliams.dev/users`          | Register a new user |
+| `POST` | `https://tysonwilliams.dev/jobs`           | Create a new job    |
+| `GET`  | `https://tysonwilliams.dev/jobs`           | List all jobs       |
+| `POST` | `https://tysonwilliams.dev/applications`   | Apply for a job     |
+| `GET`  | `https://tysonwilliams.dev/contracts`      | View contracts      |
+| `POST` | `https://tysonwilliams.dev/reviews`        | Submit a review     |
+
+---
 ---
 
 ## 📜 License

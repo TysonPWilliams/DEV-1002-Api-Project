@@ -12,6 +12,11 @@ The **Freelancer Job Board API** is structured using a relational database model
 - **Contract System**: A formal agreement is created between a client and a freelancer upon job acceptance.
 - **Review System**: After contract completion, both parties can leave reviews and ratings.
 
+
+**Project GitHub Repo**: [Github Repository](https://github.com/TysonPWilliams/DEV-1002-Api-Project)
+
+**Project Kanban Board**: [Kanban Board](https://github.com/users/TysonPWilliams/projects/8/views/1)
+
 ## Hosted API
 
 The Freelancer Job Board API is live and accessible at:

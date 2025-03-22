@@ -22,6 +22,8 @@ All API endpoints should be prefixed with this base URL. For example:
 - `GET https://tysonwilliams.dev/jobs`
 - `POST https://tysonwilliams.dev/users`
 
+⚠️ Note: If the API doesn’t respond immediately, please wait 30-60 seconds while the server wakes up.
+
 
 
 ## Database Structure (Entities & Relationships)
